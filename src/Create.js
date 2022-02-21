@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 const Create = () => {
     const [title, setTitle] = useState("");
     const [body, setBody] = useState("");
     const [author, setAuthor] = useState("mario");
     const [isPending, setIsPending] = useState(false);
+    //use history hook, will redirect user forwards and backwards
+    const history = useHistory();
 
     const handleSubmit = (e) => {
         //prevents page refresh
@@ -21,6 +24,9 @@ const Create = () => {
         }).then(()=>{
             console.log("New blog added");
             setIsPending(false);
+            // history.go(-1); <- go to previous page
+            //go to home page
+            history.push("/");
         })
     }
     return (

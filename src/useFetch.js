@@ -8,8 +8,11 @@ const useFetch = (url) => {
     //add empty dependency array if you only want to run this on initial render
     //put variables in dependency array to watch for changes in those variables only
     useEffect(()=>{
+        //abort controller if user quikcly switches pages during async request, will abort the fetch if that happens, will throw error so has to be handled as aborterror
+        const abortCont = new AbortController();
+        //set timeout to replicate server loading
         setTimeout(()=>{
-            fetch(url)
+            fetch(url, {signal: abortCont.signal})
             .then(res => {
                 if(!res.ok){
                     throw Error("Could not fetch the data for that resource");
@@ -22,10 +25,16 @@ const useFetch = (url) => {
                 setError(null);
             })
             .catch((err) => {
-                setIsPending(false);
-                setError(err.message);
+                if(err.name === "AbortError"){
+                    console.log("Fetch aborted");
+                }
+                else{
+                    setIsPending(false);
+                    setError(err.message);
+                }
             });
-        }, 1000)
+        }, 1000);
+        return () => abortCont.abort();
     }, [url]);
 
     return {data, isPending, error}

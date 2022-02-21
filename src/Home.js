@@ -4,22 +4,34 @@ import BlogList from "./BlogList";
 const Home = () => {
     const [blogs, setBlogs] = useState(null); 
     const [isPending, setIsPending] = useState(true);
+    const [error, setError] = useState(null);
     //runs initially, and then every time the data changes, don't change state here if it's watched because that triggers infinite loop lol
     //add empty dependency array if you only want to run this on initial render
     //put variables in dependency array to watch for changes in those variables only
     useEffect(()=>{
-        setTimeout(()=>{fetch("http://localhost:8000/blogs")
-        .then(res => {
-            return res.json();
-        })
-        .then(data => {
-            setBlogs(data);
-            setIsPending(false);
-        })}, 1000)
+        setTimeout(()=>{
+            fetch("http://localhost:8000/blogs")
+            .then(res => {
+                if(!res.ok){
+                    throw Error("Could not fetch the data for that resource");
+                }
+                return res.json();
+            })
+            .then(data => {
+                setBlogs(data);
+                setIsPending(false);
+                setError(null);
+            })
+            .catch((err) => {
+                setIsPending(false);
+                setError(err.message);
+            });
+        }, 1000)
     }, []);
 
     return (
         <div className="home">
+            {error && <div>{error}</div>}
             {isPending && <div>Loading...</div>}
             {blogs && <BlogList blogs={blogs} title="All blogs!" />}
         </div>

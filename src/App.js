@@ -1,11 +1,11 @@
 import Navbar from './Navbar';
 import Home from './Home';
 import Create from './Create';
+import BlogDetails from './BlogDetails';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
 function App() {
-  const title = "Welcome to the new blog!"
-  const likes = 50;
+  
   return (
     <Router>
       <div className="App">
@@ -17,6 +17,9 @@ function App() {
             </Route>
             <Route path="/create">
               <Create></Create>
+            </Route>
+            <Route path="/blogs/:id">
+              <BlogDetails></BlogDetails>
             </Route>
           </Switch>
         </div>
